@@ -18,3 +18,9 @@ jobs:
 
       - name: Run shell syntax check
         run: bash -n scripts/*.sh
+
+      - name: Check scripts are executable
+        run: |
+          test -x scripts/deploy.sh
+          test -x scripts/health-check.sh
+          test -x scripts/system-info.sh
