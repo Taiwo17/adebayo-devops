@@ -14,7 +14,7 @@ echo "Kernel:"
 uname -r
 
 echo "Operating System:"
-cat /etc/os-release | grep PRETTY_NAME
+grep PRETTY_NAME /etc/os-release
 
 echo "IP Address:"
 hostname -I
