@@ -1,2 +1,2 @@
-# Adebayo Devops Project
-## GitHub Remote Practice
+
+SSH authentication configured successfully.
