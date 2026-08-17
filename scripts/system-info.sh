@@ -21,3 +21,5 @@ hostname -I
 
 echo "System Uptime:"
 uptime -p
+
+if
