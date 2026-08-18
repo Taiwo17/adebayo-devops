@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +24,43 @@ jobs:
           test -x scripts/deploy.sh
           test -x scripts/health-check.sh
           test -x scripts/system-info.sh
+
+  test:
+    runs-on: ubuntu-latest
+    needs: validate
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test health-check script
+        run: ./scripts/health-check.sh
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build deployment package
+        run: |
+          tar -czf adebayo-devops-build.tar.gz \
+            scripts/ \
+            config/ \
+            README.md
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: adebayo-devops-build
+          path: adebayo-devops-build.tar.gz
+  
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Simulate deployment
+        run: echo "Deploying Adebayo DevOps build..."
