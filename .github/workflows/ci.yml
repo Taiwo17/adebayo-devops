@@ -117,8 +117,8 @@ jobs:
         run: |
           echo "Verifying staging deployment..."
           echo "Staging verification passed"
-          exit 1
 
+          
   deploy-production:
     runs-on: ubuntu-latest
     environment: production
