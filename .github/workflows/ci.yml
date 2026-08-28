@@ -59,8 +59,32 @@ jobs:
   
   deploy:
     runs-on: ubuntu-latest
+    environment: staging
     needs: build
 
+    env: 
+      APP_ENV: ${{vars.APP_ENV}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+    
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Verify staging environment
+        run: |
+          echo "Deploying to environment $APP_ENV"
+
+          if [ -z "$DATABASE_PASSWORD" ]; then
+            echo "Error: DATABASE_PASSWORD is not available"
+            exit 1
+          fi
+
+          echo "DATABASE_PASSWORD is available"
+
+      - name: Run environment script
+        run: ./scripts/show-environment.sh
+      
       - name: Simulate deployment
-        run: echo "Deploying Adebayo DevOps build..."
+        run: echo "Deploying Adebayo Devops build"
+
+  
