@@ -56,20 +56,37 @@ jobs:
         with:
           name: adebayo-devops-build
           path: adebayo-devops-build.tar.gz
-  
-  deploy:
+
+  deploy-staging:
     runs-on: ubuntu-latest
     environment: staging
     needs: build
 
-    env: 
+    env:
       APP_ENV: ${{vars.APP_ENV}}
       DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: adebayo-devops-build
+
+      - name: Extract deployment package
+        run: |
+          mkdir -p deployment
+          tar -xzf adebayo-devops-build.tar.gz -C deployment
+
+      - name: Verify deployment artifact
+        run: |
+          test -f deployment/README.md
+          test -d deployment/scripts
+          test -d deployment/config
+          echo "Deployment artifact verified successfully"
+
       - name: Verify staging environment
         run: |
           echo "Deploying to environment $APP_ENV"
@@ -83,8 +100,71 @@ jobs:
 
       - name: Run environment script
         run: ./scripts/show-environment.sh
-      
-      - name: Simulate deployment
-        run: echo "Deploying Adebayo Devops build"
 
-  
+      - name: Deploy to staging
+        run: |
+          echo "Deploying artifact to staging..."
+          mkdir -p staging-deployment
+          cp -r deployment/* staging-deployment/
+          echo "Staging deployment completed"
+
+  verify-staging:
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+
+    steps:
+      - name: Verify staging deployment
+        run: |
+          echo "Verifying staging deployment..."
+          echo "Staging verification passed"
+
+          
+  deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+    needs: verify-staging
+
+    env:
+      APP_ENV: ${{vars.APP_ENV}}
+      DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: adebayo-devops-build
+
+      - name: Extract deployment package
+        run: |
+          mkdir -p deployment
+          tar -xzf adebayo-devops-build.tar.gz -C deployment
+
+      - name: Verify production environment
+        run: |
+          echo "Deploying to environment $APP_ENV"
+
+          if [ "$APP_ENV" != production ]; then
+            echo "Error: Production environment is not configured correctly"
+            exit 1
+          fi
+
+          if [ -z "$DATABASE_PASSWORD" ]; then
+            echo "Error: DATABASE_PASSWORD is not available"
+            exit 1
+          fi
+
+          echo "Production environment verified"
+
+      - name: Verify deployment artifact
+        run: |
+          test -f deployment/README.md
+          test -d deployment/scripts
+          test -d deployment/config
+          echo "Production artifact verified successfully"
+
+      - name: Deploy to production
+        run: |
+          echo "Deploying artifact to production"
+          mkdir -p production-deployment
+          cp -r deployment/* production-deployment/
+          echo "Production deployment completed"

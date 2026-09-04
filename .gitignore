@@ -1,3 +1,12 @@
 .env
 logs/
 *.tar.gz
+
+docker-app/aws/
+docker-app/awscliv2.zip
+docker-app/*backup*.txt
+docker-app/current-version.txt
+docker-app/downloaded-backup.txt
+docker-app/recovered-version-*.txt
+docker-app/restored-current.txt
+scripts/deploy-with-rollback.sh
