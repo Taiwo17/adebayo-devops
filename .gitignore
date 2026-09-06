@@ -20,3 +20,5 @@ tfplan
 .terraform.tfstate.lock.info
 crash.log
 crash.*.log
+/kubernetes/secret.yaml
+secret.yaml

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: adebayo-web
+  labels:
+    app: adebayo-web
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: adebayo-web
+
+  template:
+    metadata:
+      labels:
+        app: adebayo-web
+
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+
+        envFrom:
+        - configMapRef:
+            name: adebayo-web-config
+        - secretRef:
+            name: adebayo-web-secret
+
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: app-data
+          mountPath: /usr/share/nginx/html/data
+
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: adebayo-web-pvc
