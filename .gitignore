@@ -1,3 +1,4 @@
+
 .env
 logs/
 *.tar.gz
@@ -10,3 +11,12 @@ docker-app/downloaded-backup.txt
 docker-app/recovered-version-*.txt
 docker-app/restored-current.txt
 scripts/deploy-with-rollback.sh
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+.terraform.tfstate.lock.info
+crash.log
+crash.*.log
