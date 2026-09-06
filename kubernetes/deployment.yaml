@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: adebayo-web
+  labels:
+    app: adebayo-web
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: adebayo-web
+
+  template:
+    metadata:
+      labels:
+        app: adebayo-web
+
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
