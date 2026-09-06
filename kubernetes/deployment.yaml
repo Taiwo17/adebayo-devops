@@ -20,7 +20,23 @@ spec:
 
     spec:
       containers:
-        - name: nginx
-          image: nginx:alpine
-          ports:
-            - containerPort: 80
+      - name: nginx
+        image: nginx:alpine
+
+        envFrom:
+        - configMapRef:
+            name: adebayo-web-config
+        - secretRef:
+            name: adebayo-web-secret
+
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+        - name: app-data
+          mountPath: /usr/share/nginx/html/data
+
+      volumes:
+      - name: app-data
+        persistentVolumeClaim:
+          claimName: adebayo-web-pvc
